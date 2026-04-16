@@ -48,7 +48,7 @@ void setup() {
   String firmwareVersion = getFirmwareVersion();
   Serial.println("\n");
   Serial.println("========================================");
-  Serial.println("  IoT MQTT TLS Device 1.1");
+  Serial.println("  IoT MQTT TLS Device");
   Serial.print("  Firmware Version: ");
   Serial.println(firmwareVersion);
   Serial.println("========================================");
