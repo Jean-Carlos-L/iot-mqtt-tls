@@ -253,7 +253,7 @@ bool measure(SensorData *data)
     }
     else
     {
-      Serial.print("Error leyendo la muestra\n");
+      Serial.print("Error leyendo la muestraaaa\n");
       return false;
     }
 
