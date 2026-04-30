@@ -240,22 +240,22 @@ bool measure(SensorData *data)
   {
     PRINTLN("\nMidiendo variables...");
     measureTime = millis();
-    // if (sht.readSample())
-    // {
-    //   data->temperature = sht.getTemperature();
-    //   data->humidity = sht.getHumidity();
-    //   PRINT(" %RH ❖ Temperatura: ");
-    //   PRINTD(data->humidity, 2);
-    //   PRINT(" %RH ❖ Temperatura: ");
-    //   PRINTD(data->temperature, 2);
-    //   PRINTLN(" °C");
-    //   return true;
-    // }
-    // else
-    // {
-    //   Serial.print("Error leyendo la muestra\n");
-    //   return false;
-    // }
+    if (sht.readSample())
+    {
+      data->temperature = sht.getTemperature();
+      data->humidity = sht.getHumidity();
+      PRINT(" %RH ❖ Temperatura: ");
+      PRINTD(data->humidity, 2);
+      PRINT(" %RH ❖ Temperatura: ");
+      PRINTD(data->temperature, 2);
+      PRINTLN(" °C");
+      return true;
+    }
+    else
+    {
+      Serial.print("Error leyendo la muestra\n");
+      return false;
+    }
 
     // data->temperature = 25.0 + random(-500, 500) / 100.0; // Simula temperatura entre 20.0 y 30.0 °C
     // data->humidity = 50.0 + random(-2000, 2000) / 100.0;  // Simula humedad entre 30.0% y 70.
