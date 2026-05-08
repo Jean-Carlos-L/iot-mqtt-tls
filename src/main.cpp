@@ -33,16 +33,17 @@
 // Versi?n del firmware
 #define FIRMWARE_VERSION "v1.1.1"
 
-SensorData data;  // Estructura para almacenar los datos de temperatura y humedad del SHT21
-time_t hora;      // Timestamp de la hora actual
+SensorData data; // Estructura para almacenar los datos de temperatura y humedad del SHT21
+time_t hora;     // Timestamp de la hora actual
 
 /**
  * Configura el dispositivo para conectarse a la red WiFi y ajusta parametros IoT
  */
-void setup() {
-  Serial.begin(115200);     // Paso 1. Inicializa el puerto serie
-  delay(1000);              // Espera a que el puerto serie se estabilice
-  
+void setup()
+{
+  Serial.begin(115200); // Paso 1. Inicializa el puerto serie
+  delay(1000);          // Espera a que el puerto serie se estabilice
+
   // Imprimir informaci?n del firmware al inicio
   // Usar la versi?n guardada en memoria no vol?til (si existe) o la constante por defecto
   String firmwareVersion = getFirmwareVersion();
@@ -53,23 +54,27 @@ void setup() {
   Serial.println(firmwareVersion);
   Serial.println("========================================");
   Serial.println();
-  
+
   // Factory reset si el botón BOOT (GPIO0) está presionado al arrancar
   pinMode(0, INPUT_PULLUP);
-  if (digitalRead(0) == LOW) {
+  if (digitalRead(0) == LOW)
+  {
     unsigned long t0 = millis();
-    while (digitalRead(0) == LOW && (millis() - t0) < 3000) {
+    while (digitalRead(0) == LOW && (millis() - t0) < 3000)
+    {
       delay(10);
     }
-    if ((millis() - t0) >= 3000) {
+    if ((millis() - t0) >= 3000)
+    {
       factoryReset();
     }
   }
-  listWiFiNetworks();       // Paso 2. Lista las redes WiFi disponibles
-  delay(1000);              // -- Espera 1 segundo para ver las redes disponibles
-  startDisplay();           // Paso 3. Inicializa la pantalla OLED
+  // listWiFiNetworks();       // Paso 2. Lista las redes WiFi disponibles
+  delay(1000);    // -- Espera 1 segundo para ver las redes disponibles
+  startDisplay(); // Paso 3. Inicializa la pantalla OLED
   // Si no hay credenciales, iniciar modo provisioning (AP)
-  if (!hasWiFiCredentials()) {
+  if (!hasWiFiCredentials())
+  {
     displayConnecting("Modo Configuracion AP");
     startProvisioningAP();
     return; // el loop manejará el portal
@@ -77,15 +82,18 @@ void setup() {
   // Mostrar SSID que se intentará usar
   String showSsid;
   String tmpPwd;
-  if (loadWiFiCredentials(showSsid, tmpPwd)) {
+  if (loadWiFiCredentials(showSsid, tmpPwd))
+  {
     displayConnecting(showSsid.c_str());
-  } else {
+  }
+  else
+  {
     displayConnecting(ssid);
   }
-  startWiFi("");            // Paso 5. Inicializa el servicio de WiFi
-  setupIoT();               // Paso 6. Inicializa el servicio de IoT
-  hora = setTime();         // Paso 7. Ajusta el tiempo del dispositivo con servidores SNTP
-  
+  startWiFi("");    // Paso 5. Inicializa el servicio de WiFi
+  setupIoT();       // Paso 6. Inicializa el servicio de IoT
+  hora = setTime(); // Paso 7. Ajusta el tiempo del dispositivo con servidores SNTP
+
   // Mostrar version al finalizar inicializacion (reutilizar variable ya declarada arriba)
   Serial.println();
   Serial.println("========================================");
@@ -96,16 +104,19 @@ void setup() {
 }
 
 // Función loop
-void loop() {
-  if (isProvisioning()) {   // Si estamos en modo configuración, atender portal
+void loop()
+{
+  if (isProvisioning())
+  { // Si estamos en modo configuración, atender portal
     provisioningLoop();
     return;
   }
-  checkWiFi();                                                   // Paso 1. Verifica la conexión a la red WiFi y si no está conectado, intenta reconectar
-  checkMQTT();                                                   // Paso 2. Verifica la conexión al servidor MQTT y si no está conectado, intenta reconectar
-  String message = checkAlert();                                 // Paso 3. Verifica si hay alertas y las retorna en caso de haberlas
-  if(measure(&data)){                                            // Paso 4. Realiza una medición de temperatura y humedad
+  checkWiFi();                   // Paso 1. Verifica la conexión a la red WiFi y si no está conectado, intenta reconectar
+  checkMQTT();                   // Paso 2. Verifica la conexión al servidor MQTT y si no está conectado, intenta reconectar
+  String message = checkAlert(); // Paso 3. Verifica si hay alertas y las retorna en caso de haberlas
+  if (measure(&data))
+  {                                                              // Paso 4. Realiza una medición de temperatura y humedad
     displayLoop(message, hora, data.temperature, data.humidity); // Paso 5. Muestra en la pantalla el mensaje recibido, las medidas de temperatura y humedad
     sendSensorData(data.temperature, data.humidity);             // Paso 6. Envía los datos de temperatura y humedad al servidor MQTT
-  }   
+  }
 }
